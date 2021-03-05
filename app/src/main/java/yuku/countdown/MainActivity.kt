@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import yuku.countdown.ui.theme.MyTheme
 
-
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
