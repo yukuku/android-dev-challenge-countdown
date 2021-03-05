@@ -18,11 +18,36 @@ package yuku.countdown
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.keyframes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import yuku.countdown.ui.theme.MyTheme
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +63,94 @@ class MainActivity : AppCompatActivity() {
 // Start building your app here!
 @Composable
 fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+    var remain by remember { mutableStateOf(65L) }
+
+    LaunchedEffect(0) {
+        while (true) {
+            remain -= 1L
+            delay(1000)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(percent = 50)),
+    ) {
+        Box(
+            modifier = Modifier
+                .background(Color(0xff660000))
+                .width(320.dp)
+                .height(320.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.Center) {
+                JumpyClock(remain)
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Button(onClick = { remain = (remain + 60L).coerceAtMost(3600L) }) {
+                        Text("+1 min")
+                    }
+                    Box(Modifier.width(24.dp))
+                    Button(onClick = { remain = (remain - 60L).coerceAtLeast(0L) }) {
+                        Text("-1 min")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun JumpyClock(remain: Long) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(240.dp),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        val total = remain.coerceAtLeast(0L)
+        val s = total % 60
+        val m = (total / 60)
+
+        JumpyDigit(m / 10)
+        Box(Modifier.width(4.dp))
+        JumpyDigit(m % 10)
+        Box(Modifier.width(12.dp))
+        Text(":", fontSize = 24.sp, color = Color.White, modifier = Modifier.offset(y = 112.dp))
+        Box(Modifier.width(12.dp))
+        JumpyDigit(s / 10)
+        Box(Modifier.width(4.dp))
+        JumpyDigit(s % 10)
+    }
+}
+
+@Composable
+fun JumpyDigit(digit: Long) {
+    val offset by animateDpAsState(
+        targetValue = digit.toInt().dp,
+        animationSpec = keyframes {
+            durationMillis = 400
+            0.dp at 0
+            10.dp at 15
+            0.dp at 75
+            (-40).dp at 225
+            0.dp at 325
+        },
+    )
+
+    val s = digit.toString()
+    Box(
+        modifier = Modifier
+            .offset(y = 100.dp + offset - digit.toInt().dp)
+            .clip(RoundedCornerShape(percent = 20)),
+    ) {
+        Box(
+            modifier = Modifier
+                .background(Brush.verticalGradient(listOf(Color(0xffcccccc), Color(0xff999999))))
+                .width(40.dp)
+                .height(60.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(s, fontSize = 24.sp, color = Color.Black)
+        }
     }
 }
