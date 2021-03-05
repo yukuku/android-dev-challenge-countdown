@@ -25,12 +25,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 // Start building your app here!
 @Composable
 fun MyApp() {
-    var remain by remember { mutableStateOf(65L) }
+    var remain by remember { mutableStateOf(725L) }
 
     LaunchedEffect(0) {
         while (true) {
@@ -74,24 +77,43 @@ fun MyApp() {
 
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(percent = 50)),
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier
-                .background(Color(0xff660000))
-                .width(320.dp)
-                .height(320.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.Center) {
-                JumpyClock(remain)
+        Surface(elevation = 16.dp, shape = CircleShape) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(percent = 50)),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color(0xff990000))
+                        .width(320.dp)
+                        .height(320.dp)
+                ) {
+                    Column(verticalArrangement = Arrangement.Center) {
+                        JumpyClock(remain)
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Button(onClick = { remain = (remain + 60L).coerceAtMost(3600L) }) {
-                        Text("+1 min")
-                    }
-                    Box(Modifier.width(24.dp))
-                    Button(onClick = { remain = (remain - 60L).coerceAtLeast(0L) }) {
-                        Text("-1 min")
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                            Button(onClick = { remain = (remain + 60L).coerceAtMost(3600L) }) {
+                                Text("+1 min")
+                            }
+                            Box(Modifier.width(16.dp))
+                            Button(onClick = { remain = (remain - 60L).coerceAtLeast(0L) }) {
+                                Text("-1 min")
+                            }
+                        }
+                        Box(Modifier.height(16.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                            Button(onClick = { remain = (remain + 10L).coerceAtMost(3600L) }) {
+                                Text("+10 sec")
+                            }
+                            Box(Modifier.width(16.dp))
+                            Button(onClick = { remain = (remain - 10L).coerceAtLeast(0L) }) {
+                                Text("-10 sec")
+                            }
+                        }
                     }
                 }
             }
@@ -104,7 +126,7 @@ fun JumpyClock(remain: Long) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp),
+            .height(180.dp),
         horizontalArrangement = Arrangement.Center,
     ) {
         val total = remain.coerceAtLeast(0L)
@@ -115,7 +137,7 @@ fun JumpyClock(remain: Long) {
         Box(Modifier.width(4.dp))
         JumpyDigit(m % 10)
         Box(Modifier.width(12.dp))
-        Text(":", fontSize = 24.sp, color = Color.White, modifier = Modifier.offset(y = 112.dp))
+        Text(":", fontSize = 24.sp, color = Color.White, modifier = Modifier.offset(y = 92.dp))
         Box(Modifier.width(12.dp))
         JumpyDigit(s / 10)
         Box(Modifier.width(4.dp))
@@ -140,7 +162,7 @@ fun JumpyDigit(digit: Long) {
     val s = digit.toString()
     Box(
         modifier = Modifier
-            .offset(y = 100.dp + offset - digit.toInt().dp)
+            .offset(y = 80.dp + offset - digit.toInt().dp)
             .clip(RoundedCornerShape(percent = 20)),
     ) {
         Box(
